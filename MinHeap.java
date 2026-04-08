@@ -1,11 +1,18 @@
 import java.util.ArrayList;
-import java.util.PriorityQueue;
+
+/**
+ Projeto 1 - Compressão de Arquivos com o Algoritmo de Huffman
+
+ Antônio Costa Satiro de Souza  10723636
+ Giovanna Borges Coelho         10756784
+
+*/
 
 public class MinHeap {
-    private ArrayList<No> heap;
+    private final ArrayList<No> heap;
 
     public MinHeap() {
-        heap = new ArrayList<>();
+        this.heap = new ArrayList<>();
     }
 
     public int size() {
@@ -15,25 +22,35 @@ public class MinHeap {
     public boolean isEmpty() {
         return heap.isEmpty();
     }
-    
-    public void insert (No node) {
+
+    public void insert(No node) {
+        if (node == null) {
+            return;
+        }
         heap.add(node);
         heapifyUp(heap.size() - 1);
     }
 
     public No extractMin() {
-        if (heap.isEmpty()) return null;
+        if (heap.isEmpty()) {
+            return null;
+        }
+
         No min = heap.get(0);
         No last = heap.remove(heap.size() - 1);
+
         if (!heap.isEmpty()) {
             heap.set(0, last);
             heapifyDown(0);
         }
+
         return min;
     }
 
     public No peek() {
-        if (heap.isEmpty()) return null;
+        if (heap.isEmpty()) {
+            return null;
+        }
         return heap.get(0);
     }
 
@@ -51,6 +68,7 @@ public class MinHeap {
 
     private void heapifyDown(int index) {
         int size = heap.size();
+
         while (true) {
             int left = 2 * index + 1;
             int right = 2 * index + 2;
@@ -62,6 +80,7 @@ public class MinHeap {
             if (right < size && heap.get(right).compareTo(heap.get(smallest)) < 0) {
                 smallest = right;
             }
+
             if (smallest != index) {
                 swap(index, smallest);
                 index = smallest;
@@ -71,58 +90,64 @@ public class MinHeap {
         }
     }
 
-    public void printHeap() {
-        StringBuilder sb = new StringBuilder();
-
-        sb.append("\n--------------------------------------------------");
-        sb.append("\nETAPA 2: Min-Heap Inicial (Vetor)");
-        sb.append("\n--------------------------------------------------");
-        sb.append("\n[");
-
-        ArrayList<No> heapOrdenado = ordenarListaComFilaDePrioridade();
-
-        String representacao;
-        for(int i = 0; i < heapOrdenado.size(); i++)
-        {
-            if(heapOrdenado.get(i).character == '\n') representacao = "\\n";
-            else if(heapOrdenado.get(i).character == '\r') representacao = "\\r";
-            else representacao = String.valueOf(heapOrdenado.get(i).character);
-
-            String format = String.format(" No('%s', %d)", representacao, heapOrdenado.get(i).frequencie);
-            sb.append(format);
-            if(i < heapOrdenado.size() - 1) sb.append(",");
-        }
-
-        sb.append("\n]");
-        System.out.println(sb.toString());
-    }
-
     private void swap(int i, int j) {
         No temp = heap.get(i);
         heap.set(i, heap.get(j));
         heap.set(j, temp);
     }
 
-    public ArrayList<No> ordenarListaComFilaDePrioridade() {
-        PriorityQueue<No> filaPrioridade = new PriorityQueue<No>(heap);
-        ArrayList<No> arrayOrdenado = new ArrayList<No>(filaPrioridade.size());
-        while (!filaPrioridade.isEmpty()) {
-            arrayOrdenado.add(filaPrioridade.poll());
+    public void printHeap() {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("\n--------------------------------------------------");
+        sb.append("\nETAPA 2: Min-Heap Inicial (Vetor)");
+        sb.append("\n--------------------------------------------------");
+        sb.append("\n[ ");
+
+        ArrayList<No> copiaOrdenada = new ArrayList<>(heap);
+        copiaOrdenada.sort(No::compareTo);
+
+        for (int i = 0; i < copiaOrdenada.size(); i++) {
+            No no = copiaOrdenada.get(i);
+            String representacao = representarCaractere(no.caractere);
+            sb.append(String.format("No('%s',%d)", representacao, no.frequencia));
+            if (i < copiaOrdenada.size() - 1) {
+                sb.append(", ");
+            }
         }
-        return arrayOrdenado;
+
+        sb.append(" ]");
+        System.out.println(sb.toString());
+    }
+
+    private String representarCaractere(char caractere) {
+        if (caractere == '\n') {
+            return "\\n";
+        }
+        if (caractere == '\r') {
+            return "\\r";
+        }
+        if (caractere == '\t') {
+            return "\\t";
+        }
+        if (caractere == '\0') {
+            return "\\0";
+        }
+        return String.valueOf(caractere);
     }
 
     public No montarArvore() {
-        No primeiroMenor, segundoMenor, novo;
+        if (this.isEmpty()) {
+            return null;
+        }
 
-        while(this.size() > 1) {
-            primeiroMenor = this.extractMin();
-            segundoMenor = this.extractMin();
+        while (this.size() > 1) {
+            No primeiroMenor = this.extractMin();
+            No segundoMenor = this.extractMin();
 
-            int frequenciaNovoNo = primeiroMenor.frequencie + segundoMenor.frequencie;
-            novo = new No('\0', frequenciaNovoNo);
-            novo.left = primeiroMenor;
-            novo.right = segundoMenor;
+            No novo = new No('\0', primeiroMenor.frequencia + segundoMenor.frequencia);
+            novo.esquerda = primeiroMenor;
+            novo.direita = segundoMenor;
 
             this.insert(novo);
         }
