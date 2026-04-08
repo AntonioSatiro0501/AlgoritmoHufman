@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
  Antônio Costa Satiro de Souza  10723636
  Giovanna Borges Coelho         10756784
+ Kaua Victor Oliveira de Sousa
 
 */
 
@@ -23,6 +24,8 @@ public class MinHeap {
         return heap.isEmpty();
     }
 
+    // insere um novo nó no heap
+    // adiciona o nó no final e faz ajuste para cima para manter a propriedade de min-heap
     public void insert(No node) {
         if (node == null) {
             return;
@@ -31,6 +34,8 @@ public class MinHeap {
         heapifyUp(heap.size() - 1);
     }
 
+    // remove e retorna o elemento mínimo do heap
+    // extrai a raiz, coloca o último elemento no topo e faz ajuste para baixo
     public No extractMin() {
         if (heap.isEmpty()) {
             return null;
@@ -47,6 +52,7 @@ public class MinHeap {
         return min;
     }
 
+    // retorna o elemento mínimo sem remover
     public No peek() {
         if (heap.isEmpty()) {
             return null;
@@ -54,6 +60,8 @@ public class MinHeap {
         return heap.get(0);
     }
 
+    // ajusta o heap para cima
+    // compara nó com pai e troca se for menor, repetindo até alcançar a raiz
     private void heapifyUp(int index) {
         while (index > 0) {
             int parent = (index - 1) / 2;
@@ -66,6 +74,8 @@ public class MinHeap {
         }
     }
 
+    // ajusta o heap para baixo
+    // compara nó com filhos e troca com o menor, repetindo até restaurar propriedade
     private void heapifyDown(int index) {
         int size = heap.size();
 
@@ -90,6 +100,7 @@ public class MinHeap {
         }
     }
 
+    // troca dois elementos no heap
     private void swap(int i, int j) {
         No temp = heap.get(i);
         heap.set(i, heap.get(j));
@@ -136,6 +147,9 @@ public class MinHeap {
         return String.valueOf(caractere);
     }
 
+    // constroi a arvore de Huffman
+    // extrai os dois menores nos, cria um novo no pai com a soma das frequências
+    // e reinsere na fila repetindo até restar apenas um nó (a raiz da arvore)
     public No montarArvore() {
         if (this.isEmpty()) {
             return null;
