@@ -173,28 +173,36 @@ public class Huffman {
             return;
         }
 
-        imprimirArvoreRec(raiz, "", true);
+        int[] noGlobal = {1};
+        imprimirArvoreRec(raiz, 0, noGlobal);
     }
 
     // método para imprimir recursivamente a Arvire de caracteres
-    public static void imprimirArvoreRec(No node, String prefix, boolean isTail) {
+    public static void imprimirArvoreRec(No node, int nivel, int[] noGlobal) {
         if (node == null) {
             return;
         }
 
-        String representacao = node.ehFolha() ? "'" + representarCaractere(node.caractere) + "'" : "RAIZ/N";
-        System.out.println(prefix + (isTail ? "└── " : "├── ") + "(" + representacao + ", " + node.frequencia + ")");
-
-        if (node.esquerda != null || node.direita != null) {
-            if (node.esquerda != null && node.direita != null) {
-                imprimirArvoreRec(node.esquerda, prefix + (isTail ? "    " : "│   "), false);
-                imprimirArvoreRec(node.direita, prefix + (isTail ? "    " : "│   "), true);
-            } else if (node.esquerda != null) {
-                imprimirArvoreRec(node.esquerda, prefix + (isTail ? "    " : "│   "), true);
-            } else {
-                imprimirArvoreRec(node.direita, prefix + (isTail ? "    " : "│   "), true);
+        String representacao;
+        if (nivel > 0){
+            representacao = node.ehFolha() ? "'" + representarCaractere(node.caractere) + "'" : "N" + String.valueOf(noGlobal[0]);
+            if(!node.ehFolha()){
+                noGlobal[0] += 1;
             }
+        } else {
+            representacao = "RAIZ";
         }
+
+        String prefixo = "";
+        for (int i = 0; i < nivel; i++){
+
+            prefixo += "   ";
+        }
+
+        System.out.println(prefixo + "- (" + representacao + ", " + node.frequencia + ")");
+
+        imprimirArvoreRec(node.esquerda, nivel + 1, noGlobal);
+        imprimirArvoreRec(node.direita, nivel + 1, noGlobal);
     }
 
     // método para gerar a tabela de endereços binários de cada caracter
